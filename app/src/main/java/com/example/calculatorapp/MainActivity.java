@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView primaryView, secondaryView;
     double number1,number2,result;
+    double memory, tempResult = 0;
     String operation;
 
     @Override

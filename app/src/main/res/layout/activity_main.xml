@@ -47,6 +47,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/background"
+            android:onClick="clearMemory"
             android:text="MC"
             android:textSize="15dp" />
 
@@ -56,6 +57,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/background"
+            android:onClick="showMemory"
             android:text="MR"
             android:textSize="15dp" />
 
@@ -65,6 +67,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/background"
+            android:onClick="changeMemory"
             android:text="M+"
             android:textSize="15dp" />
 
@@ -74,6 +77,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/background"
+            android:onClick="changeMemory"
             android:text="M-"
             android:textSize="15dp" />
 
