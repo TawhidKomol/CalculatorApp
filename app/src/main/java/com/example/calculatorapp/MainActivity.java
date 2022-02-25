@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     TextView primaryView, secondaryView;
     double number1,number2,result;
     double memory, tempResult = 0;
-    String operation;
+    String operator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,51 +75,154 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Operation Button Click
     public void operationFunction(View view) {
-        String primaryValue=primaryView.getText().toString();
-        if(view.getId()==R.id.addition_btnID){
-            operation="+";
+        String primaryValue = primaryView.getText().toString();
+
+        if (view.getId() == R.id.addition_btnID) {
+            operator = "+";
+        } else if (view.getId() == R.id.subtraction_btnID) {
+            operator = "-";
+        } else if (view.getId() == R.id.multi_btnID) {
+            operator = "*";
+        } else {
+            operator = "/";
         }
-        else if(view.getId()==R.id.subtraction_btnID){
-            operation="-";
-        }
-        else if(view.getId()==R.id.multi_btnID){
-            operation="*";
-        }
-        else{
-            operation="/";
-        }
-        secondaryView.setText(""+primaryValue+" "+operation);
+        secondaryView.setText("" + primaryValue + " " + operator);
         primaryView.setText("0");
-        number1=Double.parseDouble(primaryValue);
+        number1 = Double.parseDouble(primaryValue);
+
     }
 
+    // Result Button Click
     public void resultFunction(View view) {
         String primaryValue = primaryView.getText().toString();
-        number2=Double.parseDouble(primaryValue);
+        number2 = Double.parseDouble(primaryValue);
 
-        if(operation.equals("+")){
-            result=number1+number2;
+        if (operator.equals("+")) {
+            result = number1 + number2;
+        } else if (operator.equals("-")) {
+            result = number1 - number2;
+        } else if (operator.equals("*")) {
+            result = number1 * number2;
+        } else {
+            result = number1 / number2;
         }
-        else if(operation.equals("-")){
-            result=number1-number2;
+        secondaryView.setText(number1 + operator + number2 + " ");
+        primaryView.setText("" + result);
+    }
+
+    // Clear Function
+    public void clearFunction(View view) {
+        secondaryView.setText("");
+        primaryView.setText("");
+        number1 = 0.0;
+        number2 = 0.0;
+        result = 0.0;
+        operator = "";
+    }
+
+    // Add Decimal Button Click
+    public void addDecimal(View sender) {
+        String display = primaryView.getText().toString();
+
+        //if display includes a symbol other than an integer, return
+        if (isEquationSymbol(sender, display)) {
+            return;
         }
-        else if(operation.equals("*")){
-            result=number1*number2;
-        }
-        else{
-            result=number1/number2;
+        //if decimal is first item being added, append 0
+        else if (primaryView.getText().toString().equals("")) {
+            primaryView.setText("0.");
+            return;
         }
 
-        secondaryView.setText(number1+operation+number2+" ");
-        primaryView.setText(""+result);
+        double currNum = Double.parseDouble(primaryView.getText().toString());
+        //if there's already a decimal, return
+        if (primaryView.getText().toString().indexOf(".") != -1) {
+            return;
+        } else {
+            primaryView.append(".");
+        }
+    }
+
+    public boolean isEquationSymbol(View sender, String str) {
+        String[] operators = {"+", "-", "*", "/"};
+        for (int i = 0; i < operators.length; i++) {
+            if (str.contains(operators[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Back Function Click
+    public void backFunction(View view) {
+
+        String s = primaryView.getText().toString();
+        if (s.length() != 0) {
+            s = s.substring(0, s.length() - 1);
+            primaryView.setText(s);
+        }
 
     }
 
-    public void clearFunction(View view) {
-        secondaryView.setText("");
-        primaryView.setText("0");
-        number2=0.0;
-        number1=0.0;
+    // Zero Button Click
+    public void zeroFunction(View view) {
+        String s = primaryView.getText().toString();
+        if (s.length() != 0) {
+            primaryView.setText(s + "0");
+        }
+    }
+
+    // Percent Button Click
+    public void percentFunction(View view) {
+        double no = Double.parseDouble(primaryView.getText().toString()) / 100;
+        primaryView.setText(no + "");
+    }
+
+
+    //commit number currently on screen to memory
+    public void changeMemory(View sender) {
+        //if display is empty, return and commit nothing to memory
+        if (primaryView.getText().toString().equals("")) {
+            return;
+        }
+
+        Button bt = (Button) sender;
+        String command = bt.getText().toString();
+        String displayText = primaryView.getText().toString();
+        if (command.equals("M+")) { //add value to memory
+            if (displayText.contains("+") && displayText.indexOf("=") == -1) {   //use this case if the output is showing full equation
+                return;
+            } else if (displayText.indexOf("=") != -1) { //if a full equation, add tempResult to memory then reset
+                memory += tempResult;
+                tempResult = 0;
+            } else {
+                memory += Double.parseDouble(displayText);
+            }
+
+
+        } else { //subtract value from memory
+            if (displayText.indexOf("+") != -1 && displayText.indexOf("=") == -1) {   //use this case if the output is showing full equation
+                return;
+            } else if (displayText.indexOf("=") != -1) {
+                memory -= tempResult;
+                tempResult = 0;
+
+            } else {
+                memory -= Double.parseDouble(displayText);
+            }
+
+        }
+    }
+
+    //show the current memory value
+    public void showMemory(View sender) {
+        primaryView.setText(memory + "");
+    }
+
+    //reset memory value to 0
+    public void clearMemory(View sender) {
+        memory = 0;
     }
 }
